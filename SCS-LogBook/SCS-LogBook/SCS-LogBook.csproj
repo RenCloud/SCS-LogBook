@@ -52,16 +52,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account Selecter.cs">
+    <Compile Include="AccountSelecter.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Account Selecter.Designer.cs">
-      <DependentUpon>Account Selecter.cs</DependentUpon>
+    <Compile Include="AccountSelecter.Designer.cs">
+      <DependentUpon>AccountSelecter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="First_start.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="First_start.Designer.cs">
+      <DependentUpon>First_start.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Account Selecter.resx">
-      <DependentUpon>Account Selecter.cs</DependentUpon>
+    <EmbeddedResource Include="AccountSelecter.de.resx">
+      <DependentUpon>AccountSelecter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AccountSelecter.resx">
+      <DependentUpon>AccountSelecter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="First_start.de.resx">
+      <DependentUpon>First_start.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="First_start.resx">
+      <DependentUpon>First_start.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
