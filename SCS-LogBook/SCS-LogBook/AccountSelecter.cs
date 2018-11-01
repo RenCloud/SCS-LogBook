@@ -59,6 +59,8 @@ namespace SCS_LogBook
             if (Properties.Settings.Default.firstStart)
             {
                 new First_start().ShowDialog();
+                Properties.Settings.Default.firstStart = false;
+                Properties.Settings.Default.Save();
             }
             ReloadAccounts();
         }
