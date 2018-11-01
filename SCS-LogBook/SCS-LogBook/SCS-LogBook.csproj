@@ -58,12 +58,25 @@
     <Compile Include="AccountSelecter.Designer.cs">
       <DependentUpon>AccountSelecter.cs</DependentUpon>
     </Compile>
-    <Compile Include="First_start.cs">
+    <Compile Include="accountSelecterCode.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>accountSelecterCode.resx</DependentUpon>
+    </Compile>
+    <Compile Include="FirstStart.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="First_start.Designer.cs">
-      <DependentUpon>First_start.cs</DependentUpon>
+    <Compile Include="FirstStart.Designer.cs">
+      <DependentUpon>FirstStart.cs</DependentUpon>
     </Compile>
+    <Compile Include="NewUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewUser.Designer.cs">
+      <DependentUpon>NewUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\Account.cs" />
+    <Compile Include="Objects\SCSGames.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AccountSelecter.de.resx">
@@ -72,11 +85,18 @@
     <EmbeddedResource Include="AccountSelecter.resx">
       <DependentUpon>AccountSelecter.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="First_start.de.resx">
-      <DependentUpon>First_start.cs</DependentUpon>
+    <EmbeddedResource Include="accountSelecterCode.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>accountSelecterCode.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="First_start.resx">
-      <DependentUpon>First_start.cs</DependentUpon>
+    <EmbeddedResource Include="FirstStart.de.resx">
+      <DependentUpon>FirstStart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FirstStart.resx">
+      <DependentUpon>FirstStart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewUser.resx">
+      <DependentUpon>NewUser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

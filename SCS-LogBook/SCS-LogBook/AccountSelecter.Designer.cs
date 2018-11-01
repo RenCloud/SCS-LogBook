@@ -41,17 +41,19 @@
             // 
             // listView1
             // 
-            resources.ApplyResources(this.listView1, "listView1");
             this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4,
             this.columnHeader5});
+            resources.ApplyResources(this.listView1, "listView1");
             this.listView1.FullRowSelect = true;
+            this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -84,6 +86,7 @@
             resources.ApplyResources(this.button2, "button2");
             this.button2.Name = "button2";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // AccountSelecter
             // 
@@ -95,6 +98,7 @@
             this.MaximizeBox = false;
             this.Name = "AccountSelecter";
             this.ShowIcon = false;
+            this.Load += new System.EventHandler(this.AccountSelecter_Load);
             this.ResumeLayout(false);
 
         }

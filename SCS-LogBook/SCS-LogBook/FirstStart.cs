@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,10 @@ namespace SCS_LogBook
     {
         public First_start()
         {
+             
+            Directory.CreateDirectory("Data"); 
             InitializeComponent();
+
         }
 
         private void button1_Click(object sender, EventArgs e)
