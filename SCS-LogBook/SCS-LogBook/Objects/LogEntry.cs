@@ -1,7 +1,34 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
+using SCSSdkClient.Object;
 
 namespace SCS_LogBook.Objects {
     public class LogEntry {
+        public LogEntry(SCSTelemetry data)
+        {
+            // TODO
+            GameTime = data.CommonValues.GameTime.Value;
+            RealTime = DateTime.Now.Ticks;
+            CityDestination = data.JobValues.CityDestination;
+            CitySource = data.JobValues.CitySource;
+            CompanyDestination = data.JobValues.CompanyDestination;
+            CompanySource = data.JobValues.CompanySource;
+            Income = data.JobValues.Income;
+            SpeedLimit = data.NavigationValues.SpeedLimit;
+            TrailerMass = data.TrailerValues.CargoValues.Mass;
+            TrailerDamge = data.TrailerValues.Damage;
+            TrailerName = data.TrailerValues.Name;
+            Chassis = data.TrailerValues.Chassis;
+            CabinDamage = data.TruckValues.CurrentValues.DamageValues.Cabin;
+            ChassisDamage = data.TruckValues.CurrentValues.DamageValues.Chassis;
+            Engine = data.TruckValues.CurrentValues.DamageValues.Engine;
+            Transmission = data.TruckValues.CurrentValues.DamageValues.Transmission;
+            WheelsAvg = data.TruckValues.CurrentValues.DamageValues.WheelsAvg;
+            AdBlue = data.TruckValues.CurrentValues.DashboardValues.AdBlue;
+            Fuel = data.TruckValues.CurrentValues.DashboardValues.FuelValue.Amount;
+            Odometer = data.TruckValues.CurrentValues.DashboardValues.Odometer;
+        }
+
         public uint GameTime { get; internal set; }
         public long RealTime { get; internal set; }
 
@@ -26,7 +53,7 @@ namespace SCS_LogBook.Objects {
         #endregion
 
         #region Navigation
-        public float SpeedLimit { get; internal set; }
+        public SCSTelemetry.Movement SpeedLimit { get; internal set; }
         #endregion
 
         #region Trailer
