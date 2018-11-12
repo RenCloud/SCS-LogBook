@@ -4,12 +4,16 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LiteDB;
+using NLog;
 using SCS_LogBook.Objects;
+using Logger = NLog.Logger;
 
 namespace SCS_LogBook
 {
@@ -19,13 +23,18 @@ namespace SCS_LogBook
         private List<Account> _accounts;
         private LiteDatabase _accountDb;
         private NewUser nu = new NewUser();
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
+        
         public AccountSelecter()
         {
             // Test Translations
             //CultureInfo.CurrentUICulture = new CultureInfo("de");
+            Log.Debug("Load Account Selector");
             InitializeComponent();
-           
             
+
+
         }
 
         private void button2_Click(object sender, EventArgs e) {
@@ -49,6 +58,7 @@ namespace SCS_LogBook
                 ReloadAccounts();
                 MessageBox.Show(accountSelecterCode.AccountSelecter_button2_Click_User_succsesfull_added);
                 nu.ResetFields();
+                CreateUserFiles(data);
             }
             nu.Closed -= Nu_Closed; 
 
@@ -56,8 +66,10 @@ namespace SCS_LogBook
 
         private void AccountSelecter_Load(object sender, EventArgs e)
         {
+            Log.Debug("Started. Check FirstStart");
             if (Properties.Settings.Default.firstStart)
             {
+                Log.Debug("First Start of the Application. Show FirstStart Information");
                 new First_start().ShowDialog();
                 Properties.Settings.Default.firstStart = false;
                 Properties.Settings.Default.Save();
@@ -66,9 +78,13 @@ namespace SCS_LogBook
         }
 
         private void ReloadAccounts() {
+
+            Log.Debug("Load saved profiles");
             _accountDb = new LiteDatabase(ConnectionString);
             var store = _accountDb.GetCollection<Account>(DBAccountName);
             _accounts = store.FindAll().ToList();
+
+            Log.Debug("Successful loaded: {0}",_accounts.Count);
             ReloadAccountList();
         }
 
@@ -82,6 +98,8 @@ namespace SCS_LogBook
                 tempLvi.SubItems.Add(account.Game.ToString());
                 listView1.Items.Add(tempLvi);
             }
+
+            Log.Debug("Filled list with profiles");
             ResizeListViewColumns(listView1);
         }
 
@@ -117,5 +135,28 @@ namespace SCS_LogBook
             }
         }
 
+        private void CreateUserFiles(Account data) {
+
+            Directory.CreateDirectory("Data/" + data.Name);
+
+            Log.Info("Created User Directory");
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            foreach (var account in _accounts) {
+                if (!account.Name.Equals(listView1.SelectedItems[0].Text)) {
+                    continue;
+                }
+
+                var logBook = new Thread(()=> Application.Run(new LogBook(account)));
+                logBook.SetApartmentState(ApartmentState.STA);
+                logBook.Start();
+
+                Log.Debug("Selected profile found. Start logbook and hide accountselector.");
+            }
+
+           Hide();
+        }
     }
 }
