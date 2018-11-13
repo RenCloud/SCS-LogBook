@@ -20,7 +20,11 @@ using LiveCharts.Configurations;
 using LiveCharts.Wpf;     //The WPF controls
 using LiveCharts.WinForms; //the WinForm wrappers
 using LiveCharts.Configurations;
-
+using CartesianChart = LiveCharts.WinForms.CartesianChart;
+//TODO: Create SETTINGS FOR LIVE GRAPHS (DISABLE SIZE ETC)
+//TODO: SET MIN OF GRAPHS TO 0 
+//TODO: THINK ABOUT MORE LIVE CHARTS (ODOMETER, Gesamt FUEL, GEesamt way, Time , etc.)
+//TODO: Check basic CPU AND RAM NEEDINGS and after adding settings to give a ca. requirement 
 namespace SCS_LogBook
 {
     public partial class LogBook : Form {
@@ -32,7 +36,7 @@ namespace SCS_LogBook
 
         #region graph stuff
         public ChartValues<MeasureModel> speedChart { get; set; }
-
+        public ChartValues<MeasureModel> fuelNeed { get; set; }
         #endregion  
 
         private readonly Account _account;
@@ -41,13 +45,14 @@ namespace SCS_LogBook
         private List<LogEntry> toSave;
         private int valueCounter => toSave.Count;
         private int dataFetch = 0;
-        private int dataFetchAmount = 4;
+        private int dataFetchAmount = 2;
         private int saveTime = 60;
-
+        private List<double> odoMeter;
+        private List<double> fuel;
         /// <summary>
-        /// Database entry rate
+        /// Graph entry rate
         /// </summary>
-        private long span = 250;
+        private long span = 500;
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
         /// <summary>
         /// Create a Logbook view/Window
@@ -87,6 +92,7 @@ namespace SCS_LogBook
 
             //the speedChart property will store our values array
             speedChart = new ChartValues<MeasureModel>();
+            fuelNeed = new ChartValues<MeasureModel>();
             cartesianChart1.Series = new SeriesCollection
             {
                 new LineSeries
@@ -105,21 +111,41 @@ namespace SCS_LogBook
                     Step = TimeSpan.FromSeconds(5).Ticks
                 }
             });
-
-            SetAxisLimits(DateTime.Now);
-
+            cartesianChart2.Series = new SeriesCollection
+                                     {
+                                         new LineSeries
+                                         {
+                                             Values = fuelNeed,
+                                             PointGeometrySize = 5,
+                                             StrokeThickness = 1
+                                         }
+                                     };
+            cartesianChart2.AxisX.Add(new Axis
+                                      {
+                                          DisableAnimations = true,
+                                          LabelFormatter = value => new DateTime((long)value).ToString("mm:ss"),
+                                          Separator = new Separator
+                                                      {
+                                                          Step = TimeSpan.FromSeconds(5).Ticks
+                                                      }
+                                      });
+            SetAxisLimits(DateTime.Now,cartesianChart1);
+            SetAxisLimits(DateTime.Now, cartesianChart2);
             
-            
+            solidGauge1.To = 120;
+            solidGauge2.To = 1000; //TODO: SET TO FUEL SIZE
+            odoMeter = new List<double>(11);
+            fuel = new List<double>(11);
         }
        
        
          
         
        
-        private void SetAxisLimits(DateTime now)
+        private void SetAxisLimits(DateTime now, CartesianChart cont)
         {
-            cartesianChart1.AxisX[0].MaxValue = now.Ticks + TimeSpan.FromSeconds(1).Ticks; // lets force the axis to be 100ms ahead
-            cartesianChart1.AxisX[0].MinValue = now.Ticks - TimeSpan.FromSeconds(30).Ticks; //we only care about the last 60 seconds
+            cont.AxisX[0].MaxValue = now.Ticks + TimeSpan.FromSeconds(1).Ticks; // lets force the axis to be 100ms ahead
+            cont.AxisX[0].MinValue = now.Ticks - TimeSpan.FromSeconds(15).Ticks; //we only care about the last 60 seconds
         }
 
        
@@ -152,7 +178,7 @@ namespace SCS_LogBook
                     return;
                 }
 
-                if (data.Paused) {
+                if (data.Paused||data.DllVersion==0) {
 
                     // TODO: SAVE DATA AND SET LAST TIME OVER AND OVER AGAIN
                     return;
@@ -160,16 +186,35 @@ namespace SCS_LogBook
                 if (DateTime.Now.Ticks - lastTime>= TimeSpan.FromMilliseconds(span).Ticks ) {
                     lastTime = DateTime.Now.Ticks;
                     var now = System.DateTime.Now;
+                    odoMeter.Add(data.TruckValues.CurrentValues.DashboardValues.Odometer);
+                    fuel.Add(data.TruckValues.CurrentValues.DashboardValues.FuelValue.Amount);
+                    if (odoMeter.Count > 10) {
+                        odoMeter.RemoveAt(0);
+                        fuel.RemoveAt(0);
+                    }
                     speedChart.Add(new MeasureModel
                                     {
                                         DateTime = now,
                                         Value =  data.TruckValues.CurrentValues.DashboardValues.Speed.Kph
                                     });
-
-                    SetAxisLimits(now);
-
+                    // TODO: settings how long (how mutch values saved)
+                    var tempTest = Math.Round(odoMeter.Last()- odoMeter[0], 2);
+                    var tempTest2 = Math.Round( fuel[0]-fuel.Last(), 2);
+                    var val = 0d;
+                    if (tempTest != 0) {
+                        val = tempTest2 / tempTest * 100;
+                    }
+                    fuelNeed.Add(new MeasureModel
+                                   {
+                                       DateTime = now,
+                                       Value = val
+                                   });
+                    solidGauge1.Value = Math.Round(data.TruckValues.CurrentValues.DashboardValues.Speed.Kph, 2);
+                    solidGauge2.Value = Math.Round(data.TruckValues.CurrentValues.DashboardValues.FuelValue.Amount, 2);
+                    SetAxisLimits(now,cartesianChart1);
+                    SetAxisLimits(now, cartesianChart2);
                     //lets only use the last 30 values
-                    if (speedChart.Count > 130) speedChart.RemoveAt(0);
+                    if (speedChart.Count > 70) speedChart.RemoveAt(0);
 // TODO:
 // need here to save the stuff we need, but not every 250ms 
                     // save it in an list at save it every time game is paused or after 30 secs? so 120 values like the live panel
@@ -210,7 +255,8 @@ namespace SCS_LogBook
                     return;
                 }
 
-                _telemetry.Dispose();
+                _telemetry.Data -= Telemetry_Data;
+                _telemetry.Dispose(); 
                 Log.Debug("LogBook Closed");
                 closing = true; 
             }  
