@@ -1,69 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LiteDB;
+using LiveCharts;
+using LiveCharts.Configurations;
+using LiveCharts.Wpf;
 using NLog;
 using SCSSdkClient;
 using SCSSdkClient.Object;
 using SCS_LogBook.Objects;
-using Logger = NLog.Logger;
-using LiveCharts;
-using LiveCharts.Configurations;
-//Core of the library
-using LiveCharts.Wpf;     //The WPF controls
-using LiveCharts.WinForms; //the WinForm wrappers
-using LiveCharts.Configurations;
 using CartesianChart = LiveCharts.WinForms.CartesianChart;
+using Logger = NLog.Logger;
+
 //TODO: Create SETTINGS FOR LIVE GRAPHS (DISABLE SIZE ETC)
 //TODO: SET MIN OF GRAPHS TO 0 
 //TODO: THINK ABOUT MORE LIVE CHARTS (ODOMETER, Gesamt FUEL, GEesamt way, Time , etc.)
 //TODO: Check basic CPU AND RAM NEEDINGS and after adding settings to give a ca. requirement 
-namespace SCS_LogBook
-{
+namespace SCS_LogBook {
+    /// <summary>
+    /// Logbook for a account
+    /// After initialization logging start immediately
+    /// </summary>
     public partial class LogBook : Form {
-        #region Database Stuff
-        private string _path = "Data/";
-        private LiteDatabase _data;
-
-        #endregion
-
-        #region graph stuff
-        public ChartValues<MeasureModel> speedChart { get; set; }
-        public ChartValues<MeasureModel> fuelNeed { get; set; }
-        #endregion  
-
-        private readonly Account _account;
-        private SCSSdkTelemetry _telemetry;
-        private long lastTime;
-        private List<LogEntry> toSave;
-        private int valueCounter => toSave.Count;
-        private int dataFetch = 0;
-        private int dataFetchAmount = 2;
-        private int saveTime = 60;
-        private List<double> odoMeter;
-        private List<double> fuel;
         /// <summary>
-        /// Graph entry rate
+        /// Logger Instance for logging purpose
         /// </summary>
-        private long span = 500;
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
         /// <summary>
-        /// Create a Logbook view/Window
+        /// Account of the Logbook
+        /// </summary>
+        private readonly Account _account;
+        /// <summary>
+        /// Telemetry object 
+        /// </summary>
+        private readonly SCSSdkTelemetry _telemetry;
+
+        /// <summary>
+        /// Used to differentiate between closing and account changing
+        /// </summary>
+        private bool _closing;
+        /// <summary>
+        /// We don't want to save data in the same rate as we update the live panels
+        /// This counter counts the times we don't save the data 
+        /// </summary>
+        private int _dataFetch;
+
+        /// <summary>
+        /// How often is the data refreshed until we saved it?
+        /// so _dataFetch*span == SaveTime
+        /// </summary>
+        private const int DataFetchAmount = 2;
+        /// <summary>
+        /// List to create the avg fuel live panel
+        /// </summary>
+        private readonly List<double> _fuel;
+        /// <summary>
+        /// Displays the Time we refreshed last time
+        /// </summary>
+        private long _lastTime;
+        /// <summary>
+        /// List to create the avg fuel live panel
+        /// </summary>
+        private readonly List<double> _odoMeter;
+
+        /// <summary>
+        /// How many time/entries until we write savelist to db
+        /// </summary>
+        private const int SaveTime = 120;
+
+        /// <summary>
+        ///     Graph entry rate
+        /// </summary>
+        private const long Span = 500;
+
+        /// <summary>
+        /// Contains entries that will be written to db in the next phase
+        /// </summary>
+        private readonly List<LogEntry> _toSave;
+
+        /// <summary>
+        ///     Create a Logbook view/Window
         /// </summary>
         /// <param name="account">Account of the Logbook</param>
         public LogBook(Account account) {
             _account = account;
-            this.toSave = new List<LogEntry>(saveTime);
+            _toSave = new List<LogEntry>(SaveTime);
             InitializeComponent();
             Text = string.Format(LogBookCode.LogBook_LogBook_Logbook_of__0_, account.Name);
-            
+
             // init the telemetry to start getting data
             _telemetry = new SCSSdkTelemetry();
             _telemetry.Data += Telemetry_Data;
@@ -84,8 +111,8 @@ namespace SCS_LogBook
             //you can configure series in many ways, learn more at http://lvcharts.net/App/examples/v1/wpf/Types%20and%20Configuration
             // TODO: Create a function for later -> more graphics (live graphics)
             var mapper = Mappers.Xy<MeasureModel>()
-                .X(model => model.DateTime.Ticks)   //use DateTime.Ticks as X
-                .Y(model => model.Value);           //use the value property as Y
+                                .X(model => model.DateTime.Ticks) //use DateTime.Ticks as X
+                                .Y(model => model.Value);         //use the value property as Y
 
             //lets save the mapper globally.
             Charting.For<MeasureModel>(mapper);
@@ -93,66 +120,76 @@ namespace SCS_LogBook
             //the speedChart property will store our values array
             speedChart = new ChartValues<MeasureModel>();
             fuelNeed = new ChartValues<MeasureModel>();
-            cartesianChart1.Series = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Values = speedChart,
-                    PointGeometrySize = 5,
-                    StrokeThickness = 1
-                }
-            };
-            cartesianChart1.AxisX.Add(new Axis
-            {
-                DisableAnimations = true,
-                LabelFormatter = value => new DateTime((long)value).ToString("mm:ss"),
-                Separator = new Separator
-                {
-                    Step = TimeSpan.FromSeconds(5).Ticks
-                }
-            });
-            cartesianChart2.Series = new SeriesCollection
-                                     {
-                                         new LineSeries
-                                         {
-                                             Values = fuelNeed,
-                                             PointGeometrySize = 5,
-                                             StrokeThickness = 1
-                                         }
-                                     };
-            cartesianChart2.AxisX.Add(new Axis
-                                      {
-                                          DisableAnimations = true,
-                                          LabelFormatter = value => new DateTime((long)value).ToString("mm:ss"),
-                                          Separator = new Separator
-                                                      {
-                                                          Step = TimeSpan.FromSeconds(5).Ticks
-                                                      }
-                                      });
-            SetAxisLimits(DateTime.Now,cartesianChart1);
+            odoMeters = new ChartValues<MeasureModel>();
+            cartesianChart1.Series = new SeriesCollection {
+                                                              new LineSeries {
+                                                                                 Values = speedChart,
+                                                                                 PointGeometrySize = 5,
+                                                                                 StrokeThickness = 1
+                                                                             }
+                                                          };
+            cartesianChart1.AxisX.Add(new Axis {
+                                                   DisableAnimations = true,
+                                                   LabelFormatter =
+                                                       value => new DateTime((long) value).ToString("mm:ss"),
+                                                   Separator = new Separator {
+                                                                                 Step = TimeSpan.FromSeconds(5).Ticks
+                                                                             }
+                                               });
+            cartesianChart2.Series = new SeriesCollection {
+                                                              new LineSeries {
+                                                                                 Values = fuelNeed,
+                                                                                 PointGeometrySize = 5,
+                                                                                 StrokeThickness = 1
+                                                                             }
+                                                          };
+            cartesianChart2.AxisX.Add(new Axis {
+                                                   DisableAnimations = true,
+                                                   LabelFormatter =
+                                                       value => new DateTime((long) value).ToString("mm:ss"),
+                                                   Separator = new Separator {
+                                                                                 Step = TimeSpan.FromSeconds(5).Ticks
+                                                                             }
+                                               });
+            cartesianChart3.Series = new SeriesCollection {
+                                                              new LineSeries {
+                                                                                 Values = odoMeters,
+                                                                                 PointGeometrySize = 5,
+                                                                                 StrokeThickness = 1
+                                                                             }
+                                                          };
+            cartesianChart3.AxisX.Add(new Axis {
+                                                   DisableAnimations = true,
+                                                   LabelFormatter =
+                                                       value => new DateTime((long) value).ToString("mm:ss"),
+                                                   Separator = new Separator {
+                                                                                 Step = TimeSpan.FromSeconds(5).Ticks
+                                                                             }
+                                               });
+            SetAxisLimits(DateTime.Now, cartesianChart1);
             SetAxisLimits(DateTime.Now, cartesianChart2);
-            
+            SetAxisLimits(DateTime.Now, cartesianChart3);
             solidGauge1.To = 120;
             solidGauge2.To = 1000; //TODO: SET TO FUEL SIZE
-            odoMeter = new List<double>(11);
-            fuel = new List<double>(11);
-        }
-       
-       
-         
-        
-       
-        private void SetAxisLimits(DateTime now, CartesianChart cont)
-        {
-            cont.AxisX[0].MaxValue = now.Ticks + TimeSpan.FromSeconds(1).Ticks; // lets force the axis to be 100ms ahead
-            cont.AxisX[0].MinValue = now.Ticks - TimeSpan.FromSeconds(15).Ticks; //we only care about the last 60 seconds
+            _odoMeter = new List<double>(11);
+            _fuel = new List<double>(11);
         }
 
-       
+        private int valueCounter => _toSave.Count;
+
+
         public sealed override string Text {
             get => base.Text;
             set => base.Text = value;
         }
+
+
+        private void SetAxisLimits(DateTime now, CartesianChart cont) {
+            cont.AxisX[0].MaxValue = now.Ticks + TimeSpan.FromSeconds(1).Ticks; // lets force the axis to be 100ms ahead
+            cont.AxisX[0].MinValue =
+                now.Ticks - TimeSpan.FromSeconds(60).Ticks; //we only care about the last 60 seconds
+        }
+
         private void TelemetryOnJobFinished(object sender, EventArgs args) {
             // TODO: Fill this and also may have to recheck SDK Field because of Trailer ownership
         }
@@ -161,92 +198,96 @@ namespace SCS_LogBook
             // TODO: Fill this and also may have to recheck SDK Field because of Trailer ownership
         }
 
-        private void LogBook_Load(object sender, EventArgs e)
-        {
-            _data = new LiteDatabase(_path+_account.Name+"/logbook.lite");
-        }
+        private void LogBook_Load(object sender, EventArgs e) =>
+            _data = new LiteDatabase(_path + _account.Name + "/logbook.lite");
 
-  
 
         private void Telemetry_Data(SCSTelemetry data, bool updated) {
-            try
-            {
-                 
-                if (InvokeRequired)
-                {
+            try {
+                if (InvokeRequired) {
                     Invoke(new TelemetryData(Telemetry_Data), data, updated);
                     return;
                 }
 
-                if (data.Paused||data.DllVersion==0) {
-
+                if (data.Paused || data.DllVersion == 0) {
                     // TODO: SAVE DATA AND SET LAST TIME OVER AND OVER AGAIN
                     return;
                 }
-                if (DateTime.Now.Ticks - lastTime>= TimeSpan.FromMilliseconds(span).Ticks ) {
-                    lastTime = DateTime.Now.Ticks;
-                    var now = System.DateTime.Now;
-                    odoMeter.Add(data.TruckValues.CurrentValues.DashboardValues.Odometer);
-                    fuel.Add(data.TruckValues.CurrentValues.DashboardValues.FuelValue.Amount);
-                    if (odoMeter.Count > 10) {
-                        odoMeter.RemoveAt(0);
-                        fuel.RemoveAt(0);
+
+                if (DateTime.Now.Ticks - _lastTime >= TimeSpan.FromMilliseconds(Span).Ticks) {
+                    _lastTime = DateTime.Now.Ticks;
+                    var now = DateTime.Now;
+                    _odoMeter.Add(data.TruckValues.CurrentValues.DashboardValues.Odometer);
+                    _fuel.Add(data.TruckValues.CurrentValues.DashboardValues.FuelValue.Amount);
+                    if (_odoMeter.Count > 10) {
+                        _odoMeter.RemoveAt(0);
+                        _fuel.RemoveAt(0);
                     }
-                    speedChart.Add(new MeasureModel
-                                    {
-                                        DateTime = now,
-                                        Value =  data.TruckValues.CurrentValues.DashboardValues.Speed.Kph
-                                    });
+
+                    speedChart.Add(new MeasureModel {
+                                                        DateTime = now,
+                                                        Value = data.TruckValues.CurrentValues.DashboardValues.Speed.Kph
+                                                    });
                     // TODO: settings how long (how mutch values saved)
-                    var tempTest = Math.Round(odoMeter.Last()- odoMeter[0], 2);
-                    var tempTest2 = Math.Round( fuel[0]-fuel.Last(), 2);
+                    var tempTest = Math.Round(_odoMeter.Last() - _odoMeter[0], 2);
+                    var tempTest2 = Math.Round(_fuel[0] - _fuel.Last(), 2);
                     var val = 0d;
                     if (tempTest != 0) {
                         val = tempTest2 / tempTest * 100;
                     }
-                    fuelNeed.Add(new MeasureModel
-                                   {
-                                       DateTime = now,
-                                       Value = val
-                                   });
+
+                    fuelNeed.Add(new MeasureModel {
+                                                      DateTime = now,
+                                                      Value = val
+                                                  });
+                    odoMeters.Add(new MeasureModel {
+                                                       DateTime = now,
+                                                       Value =
+                                                           Math
+                                                               .Round(data.TruckValues.CurrentValues.DashboardValues.Odometer,
+                                                                      2)
+                                                   });
                     solidGauge1.Value = Math.Round(data.TruckValues.CurrentValues.DashboardValues.Speed.Kph, 2);
                     solidGauge2.Value = Math.Round(data.TruckValues.CurrentValues.DashboardValues.FuelValue.Amount, 2);
-                    SetAxisLimits(now,cartesianChart1);
+                    SetAxisLimits(now, cartesianChart1);
                     SetAxisLimits(now, cartesianChart2);
+                    SetAxisLimits(now, cartesianChart3);
                     //lets only use the last 30 values
-                    if (speedChart.Count > 70) speedChart.RemoveAt(0);
-// TODO:
-// need here to save the stuff we need, but not every 250ms 
-                    // save it in an list at save it every time game is paused or after 30 secs? so 120 values like the live panel
-                    dataFetch++;
-                    if (dataFetch == dataFetchAmount) {
-                        dataFetch = 0;
-                        toSave.Add(new LogEntry(data));
-                        if (valueCounter == saveTime) {
-                            Console.WriteLine("SAAAAAVEEE");
-                            //TODO: SAVE IT
-                            toSave.Clear();
-                        }
+                    if (speedChart.Count > 250) {
+                        speedChart.RemoveAt(0);
                     }
 
+                    if (fuelNeed.Count > 250) {
+                        fuelNeed.RemoveAt(0);
+                    }
+
+                    if (odoMeters.Count > 70250) {
+                        odoMeters.RemoveAt(0);
+                    }
+
+                    label4.Text = Math.Round(data.TruckValues.CurrentValues.DashboardValues.Odometer, 2)
+                                      .ToString(CultureInfo.CurrentCulture);
+                    // TODO:
+                    // need here to save the stuff we need, but not every 250ms 
+                    // save it in an list at save it every time game is paused or after 30 secs? so 120 values like the live panel
+                    _dataFetch++;
+                    if (_dataFetch == DataFetchAmount) {
+                        _dataFetch = 0;
+                        _toSave.Add(new LogEntry(data));
+                        if (valueCounter == SaveTime) {
+                            Console.WriteLine("SAAAAAVEEE");
+                            //TODO: SAVE IT
+                            _toSave.Clear();
+                        }
+                    }
                 }
-               
-
-                
-
-
-
-
-            }
-            catch(Exception ex)
-            {
+            } catch (Exception ex) {
                 Log.Error(ex);
             }
-
         }
 
         private void LogBook_FormClosing(object sender, FormClosingEventArgs e) {
-            if (!closing) {
+            if (!_closing) {
                 // TODO: Make it possible to change logbook -> that means here we have to check if it a close or change  
                 // TODO: still not working as expected, but when running longer it works Ô.o
                 if (MessageBox.Show("Are you sure you want to quit?", "SCS-Logbook", MessageBoxButtons.YesNo) ==
@@ -256,19 +297,32 @@ namespace SCS_LogBook
                 }
 
                 _telemetry.Data -= Telemetry_Data;
-                _telemetry.Dispose(); 
+                _telemetry.Dispose();
                 Log.Debug("LogBook Closed");
-                closing = true; 
-            }  
-                Application.Exit();
-          
+                _closing = true;
+            }
+
+            Application.Exit();
         }
 
-        private bool closing = false;
+        #region Database Stuff
 
+        private readonly string _path = "Data/";
+        private LiteDatabase _data;
+
+        #endregion
+
+        #region graph stuff
+
+        public ChartValues<MeasureModel> speedChart { get; set; }
+        public ChartValues<MeasureModel> fuelNeed { get; set; }
+
+        public ChartValues<MeasureModel> odoMeters { get; set; }
+
+        #endregion
     }
-    public class MeasureModel
-    {
+
+    public class MeasureModel {
         public DateTime DateTime { get; set; }
         public double Value { get; set; }
     }

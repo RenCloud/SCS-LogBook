@@ -76,6 +76,9 @@
             this.label2 = new System.Windows.Forms.Label();
             this.cartesianChart2 = new LiveCharts.WinForms.CartesianChart();
             this.solidGauge2 = new LiveCharts.WinForms.SolidGauge();
+            this.label3 = new System.Windows.Forms.Label();
+            this.cartesianChart3 = new LiveCharts.WinForms.CartesianChart();
+            this.label4 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage4.SuspendLayout();
@@ -411,22 +414,27 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 211F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 575F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 360F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 426F));
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.cartesianChart1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.solidGauge1, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.cartesianChart2, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.solidGauge2, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.cartesianChart3, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.label4, 1, 5);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowCount = 6;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 101F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(786, 394);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -441,24 +449,25 @@
             // 
             // cartesianChart1
             // 
+            this.cartesianChart1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cartesianChart1.Location = new System.Drawing.Point(3, 23);
             this.cartesianChart1.Name = "cartesianChart1";
-            this.cartesianChart1.Size = new System.Drawing.Size(200, 95);
+            this.cartesianChart1.Size = new System.Drawing.Size(354, 94);
             this.cartesianChart1.TabIndex = 1;
             this.cartesianChart1.Text = "cartesianChart1";
             // 
             // solidGauge1
             // 
-            this.solidGauge1.Location = new System.Drawing.Point(214, 23);
+            this.solidGauge1.Location = new System.Drawing.Point(363, 23);
             this.solidGauge1.Name = "solidGauge1";
-            this.solidGauge1.Size = new System.Drawing.Size(200, 95);
+            this.solidGauge1.Size = new System.Drawing.Size(200, 94);
             this.solidGauge1.TabIndex = 2;
             this.solidGauge1.Text = "solidGauge1";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 121);
+            this.label2.Location = new System.Drawing.Point(3, 120);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(27, 13);
             this.label2.TabIndex = 3;
@@ -466,19 +475,47 @@
             // 
             // cartesianChart2
             // 
-            this.cartesianChart2.Location = new System.Drawing.Point(3, 144);
+            this.cartesianChart2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cartesianChart2.Location = new System.Drawing.Point(3, 143);
             this.cartesianChart2.Name = "cartesianChart2";
-            this.cartesianChart2.Size = new System.Drawing.Size(200, 95);
+            this.cartesianChart2.Size = new System.Drawing.Size(354, 94);
             this.cartesianChart2.TabIndex = 4;
             this.cartesianChart2.Text = "cartesianChart2";
             // 
             // solidGauge2
             // 
-            this.solidGauge2.Location = new System.Drawing.Point(214, 144);
+            this.solidGauge2.Location = new System.Drawing.Point(363, 143);
             this.solidGauge2.Name = "solidGauge2";
-            this.solidGauge2.Size = new System.Drawing.Size(200, 95);
+            this.solidGauge2.Size = new System.Drawing.Size(200, 94);
             this.solidGauge2.TabIndex = 5;
             this.solidGauge2.Text = "solidGauge2";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(3, 240);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(53, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Odometer";
+            // 
+            // cartesianChart3
+            // 
+            this.cartesianChart3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cartesianChart3.Location = new System.Drawing.Point(3, 263);
+            this.cartesianChart3.Name = "cartesianChart3";
+            this.cartesianChart3.Size = new System.Drawing.Size(354, 128);
+            this.cartesianChart3.TabIndex = 7;
+            this.cartesianChart3.Text = "cartesianChart3";
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(363, 260);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(200, 55);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "label4";
             // 
             // LogBook
             // 
@@ -552,5 +589,8 @@
         private System.Windows.Forms.Label label2;
         private LiveCharts.WinForms.CartesianChart cartesianChart2;
         private LiveCharts.WinForms.SolidGauge solidGauge2;
+        private System.Windows.Forms.Label label3;
+        private LiveCharts.WinForms.CartesianChart cartesianChart3;
+        private System.Windows.Forms.Label label4;
     }
 }
