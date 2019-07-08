@@ -1,0 +1,3 @@
+[submodule "scs-sdk-plugin"]
+	path = scs-sdk-plugin
+	url = git@github.com:RenCloud/scs-sdk-plugin.git

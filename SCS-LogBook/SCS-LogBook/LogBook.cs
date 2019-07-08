@@ -20,54 +20,18 @@ using Logger = NLog.Logger;
 //TODO: Check basic CPU AND RAM NEEDINGS and after adding settings to give a ca. requirement 
 namespace SCS_LogBook {
     /// <summary>
-    /// Logbook for a account
-    /// After initialization logging start immediately
+    ///     Logbook for a account
+    ///     After initialization logging start immediately
     /// </summary>
     public partial class LogBook : Form {
         /// <summary>
-        /// Logger Instance for logging purpose
-        /// </summary>
-        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-
-        /// <summary>
-        /// Account of the Logbook
-        /// </summary>
-        private readonly Account _account;
-        /// <summary>
-        /// Telemetry object 
-        /// </summary>
-        private readonly SCSSdkTelemetry _telemetry;
-
-        /// <summary>
-        /// Used to differentiate between closing and account changing
-        /// </summary>
-        private bool _closing;
-        /// <summary>
-        /// We don't want to save data in the same rate as we update the live panels
-        /// This counter counts the times we don't save the data 
-        /// </summary>
-        private int _dataFetch;
-
-        /// <summary>
-        /// How often is the data refreshed until we saved it?
-        /// so _dataFetch*span == SaveTime
+        ///     How often is the data refreshed until we saved it?
+        ///     so _dataFetch*span == SaveTime
         /// </summary>
         private const int DataFetchAmount = 2;
-        /// <summary>
-        /// List to create the avg fuel live panel
-        /// </summary>
-        private readonly List<double> _fuel;
-        /// <summary>
-        /// Displays the Time we refreshed last time
-        /// </summary>
-        private long _lastTime;
-        /// <summary>
-        /// List to create the avg fuel live panel
-        /// </summary>
-        private readonly List<double> _odoMeter;
 
         /// <summary>
-        /// How many time/entries until we write savelist to db
+        ///     How many time/entries until we write savelist to db
         /// </summary>
         private const int SaveTime = 120;
 
@@ -77,9 +41,50 @@ namespace SCS_LogBook {
         private const long Span = 500;
 
         /// <summary>
-        /// Contains entries that will be written to db in the next phase
+        ///     Logger Instance for logging purpose
+        /// </summary>
+        private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
+        /// <summary>
+        ///     Account of the Logbook
+        /// </summary>
+        private readonly Account _account;
+
+        /// <summary>
+        ///     List to create the avg fuel live panel
+        /// </summary>
+        private readonly List<double> _fuel;
+
+        /// <summary>
+        ///     List to create the avg fuel live panel
+        /// </summary>
+        private readonly List<double> _odoMeter;
+
+        /// <summary>
+        ///     Telemetry object
+        /// </summary>
+        private readonly SCSSdkTelemetry _telemetry;
+
+        /// <summary>
+        ///     Contains entries that will be written to db in the next phase
         /// </summary>
         private readonly List<LogEntry> _toSave;
+
+        /// <summary>
+        ///     Used to differentiate between closing and account changing
+        /// </summary>
+        private bool _closing;
+
+        /// <summary>
+        ///     We don't want to save data in the same rate as we update the live panels
+        ///     This counter counts the times we don't save the data
+        /// </summary>
+        private int _dataFetch;
+
+        /// <summary>
+        ///     Displays the Time we refreshed last time
+        /// </summary>
+        private long _lastTime;
 
         /// <summary>
         ///     Create a Logbook view/Window
@@ -276,6 +281,7 @@ namespace SCS_LogBook {
                         _toSave.Add(new LogEntry(data));
                         if (valueCounter == SaveTime) {
                             Console.WriteLine("SAAAAAVEEE");
+
                             //TODO: SAVE IT
                             _toSave.Clear();
                         }

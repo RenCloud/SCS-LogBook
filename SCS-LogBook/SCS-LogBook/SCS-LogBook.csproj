@@ -56,9 +56,6 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="SCSSdkClient">
-      <HintPath>Libraries\SCSSdkClient.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -176,6 +173,12 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\scs-sdk-plugin\scs-client\C#\SCSSdkClient\SCSSdkClient.csproj">
+      <Project>{b62f8e57-9d8c-4ea2-90e4-1f6b09dce468}</Project>
+      <Name>SCSSdkClient</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

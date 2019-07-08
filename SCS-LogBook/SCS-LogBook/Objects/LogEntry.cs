@@ -15,10 +15,7 @@ namespace SCS_LogBook.Objects {
             CompanySource = data.JobValues.CompanySource;
             Income = data.JobValues.Income;
             SpeedLimit = data.NavigationValues.SpeedLimit;
-            TrailerMass = data.TrailerValues.CargoValues.Mass;
-            TrailerDamge = data.TrailerValues.Damage;
-            TrailerName = data.TrailerValues.Name;
-            Chassis = data.TrailerValues.Chassis;
+            
             CabinDamage = data.TruckValues.CurrentValues.DamageValues.Cabin;
             ChassisDamage = data.TruckValues.CurrentValues.DamageValues.Chassis;
             Engine = data.TruckValues.CurrentValues.DamageValues.Engine;
@@ -46,7 +43,7 @@ namespace SCS_LogBook.Objects {
 
         public string CompanySource { get; internal set; }
 
-        public long Income { get; internal set; }
+        public ulong Income { get; internal set; }
 
 
 
