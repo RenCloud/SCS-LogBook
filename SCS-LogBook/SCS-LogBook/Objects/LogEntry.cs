@@ -55,7 +55,7 @@ namespace SCS_LogBook.Objects {
 
         #region Trailer
         public float TrailerMass { get; internal set; }
-        public float TrailerDamge { get; internal set; }
+        public float TrailerDamage { get; internal set; }
         public string TrailerName { get; internal set; }
         public string Chassis { get; internal set; }
 
