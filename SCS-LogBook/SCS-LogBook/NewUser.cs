@@ -22,7 +22,7 @@ namespace SCS_LogBook
         internal Account newUser {
             get {
                 Enum.TryParse<SCSGame>(comboBox1.SelectedValue.ToString(), out var game);
-                return new Account(tb_username.Text, game, 0d,0d,0d );
+                return new Account(tb_username.Text, game);
             }
     }
 

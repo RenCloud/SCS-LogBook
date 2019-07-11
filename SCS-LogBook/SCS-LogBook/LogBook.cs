@@ -269,9 +269,7 @@ namespace SCS_LogBook {
                     if (odoMeters.Count > 70250) {
                         odoMeters.RemoveAt(0);
                     }
-
-                    label4.Text = Math.Round(data.TruckValues.CurrentValues.DashboardValues.Odometer, 2)
-                                      .ToString(CultureInfo.CurrentCulture);
+                    
                     // TODO:
                     // need here to save the stuff we need, but not every 250ms 
                     // save it in an list at save it every time game is paused or after 30 secs? so 120 values like the live panel

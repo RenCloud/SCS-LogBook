@@ -107,8 +107,12 @@
       <DependentUpon>NewUser.cs</DependentUpon>
     </Compile>
     <Compile Include="Objects\Account.cs" />
+    <Compile Include="Objects\FineEntry.cs" />
+    <Compile Include="Objects\JobEntry.cs" />
     <Compile Include="Objects\LogEntry.cs" />
     <Compile Include="Objects\SCSGames.cs" />
+    <Compile Include="Objects\TollgateEntry.cs" />
+    <Compile Include="Objects\TransportEntry.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LogBookCode.Designer.cs">
