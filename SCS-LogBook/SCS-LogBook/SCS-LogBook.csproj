@@ -77,11 +77,11 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountSelecter.cs">
+    <Compile Include="AccountSelector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AccountSelecter.Designer.cs">
-      <DependentUpon>AccountSelecter.cs</DependentUpon>
+    <Compile Include="AccountSelector.Designer.cs">
+      <DependentUpon>AccountSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="accountSelecterCode.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -120,11 +120,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LogBookCode.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AccountSelecter.de.resx">
-      <DependentUpon>AccountSelecter.cs</DependentUpon>
+    <EmbeddedResource Include="AccountSelector.de.resx">
+      <DependentUpon>AccountSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AccountSelecter.resx">
-      <DependentUpon>AccountSelecter.cs</DependentUpon>
+    <EmbeddedResource Include="AccountSelector.resx">
+      <DependentUpon>AccountSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="accountSelecterCode.resx">
       <Generator>ResXFileCodeGenerator</Generator>

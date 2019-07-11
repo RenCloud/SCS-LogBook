@@ -29,31 +29,31 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AccountSelector));
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.lv_accountList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.b_loadSelectedAccount = new System.Windows.Forms.Button();
+            this.b_createNew = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // listView1
+            // lv_accountList
             // 
-            this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lv_accountList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
             this.columnHeader4,
             this.columnHeader5});
-            resources.ApplyResources(this.listView1, "listView1");
-            this.listView1.FullRowSelect = true;
-            this.listView1.MultiSelect = false;
-            this.listView1.Name = "listView1";
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+            resources.ApplyResources(this.lv_accountList, "lv_accountList");
+            this.lv_accountList.FullRowSelect = true;
+            this.lv_accountList.MultiSelect = false;
+            this.lv_accountList.Name = "lv_accountList";
+            this.lv_accountList.UseCompatibleStateImageBehavior = false;
+            this.lv_accountList.View = System.Windows.Forms.View.Details;
+            this.lv_accountList.SelectedIndexChanged += new System.EventHandler(this.Lv_accountList_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -75,45 +75,45 @@
             // 
             resources.ApplyResources(this.columnHeader5, "columnHeader5");
             // 
-            // button1
+            // b_loadSelectedAccount
             // 
-            resources.ApplyResources(this.button1, "button1");
-            this.button1.Name = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            resources.ApplyResources(this.b_loadSelectedAccount, "b_loadSelectedAccount");
+            this.b_loadSelectedAccount.Name = "b_loadSelectedAccount";
+            this.b_loadSelectedAccount.UseVisualStyleBackColor = true;
+            this.b_loadSelectedAccount.Click += new System.EventHandler(this.B_loadSelectedAccount_Click);
             // 
-            // button2
+            // b_createNew
             // 
-            resources.ApplyResources(this.button2, "button2");
-            this.button2.Name = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            resources.ApplyResources(this.b_createNew, "b_createNew");
+            this.b_createNew.Name = "b_createNew";
+            this.b_createNew.UseVisualStyleBackColor = true;
+            this.b_createNew.Click += new System.EventHandler(this.B_createNew_Click);
             // 
             // AccountSelector
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.b_createNew);
+            this.Controls.Add(this.b_loadSelectedAccount);
+            this.Controls.Add(this.lv_accountList);
             this.MaximizeBox = false;
             this.Name = "AccountSelector";
             this.ShowIcon = false;
-            this.Load += new System.EventHandler(this.AccountSelecter_Load);
+            this.Load += new System.EventHandler(this.AccountSelector_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView lv_accountList;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button b_loadSelectedAccount;
+        private System.Windows.Forms.Button b_createNew;
     }
 }
 
